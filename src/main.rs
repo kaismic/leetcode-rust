@@ -1,6 +1,6 @@
 #![allow(unused)]
-
 use std::collections::HashMap;
+use std::collections::HashSet;
 
 fn main() {}
 
@@ -141,4 +141,36 @@ fn check_inclusion(s1: String, s2: String) -> bool {
         }
     }
     return false;
+}
+
+// #207
+pub fn can_finish(num_courses: i32, prerequisites: Vec<Vec<i32>>) -> bool {
+    let mut graph: Vec<Vec<i32>> = vec![Vec::new(); num_courses as usize];
+    let mut visited: Vec<i8> = vec![0; num_courses as usize];
+    for p in &prerequisites {
+        graph[p[0] as usize].push(p[1]);
+    }
+    for i in 0..num_courses as usize {
+        if !path_can_finish(&mut graph, &mut visited, i) {
+            return false;
+        }
+    }
+    return true;
+}
+
+fn path_can_finish(graph: &mut Vec<Vec<i32>>, visited: &mut Vec<i8>, i: usize) -> bool {
+    if visited[i] == -1 {
+        return false;
+    }
+    if visited[i] == 1 {
+        return true;
+    }
+    visited[i] = -1;
+    for j in 0..graph[i].len() {
+        if !path_can_finish(graph, visited, graph[i][j] as usize) {
+            return false;
+        }
+    }
+    visited[i] = 1;
+    return true;
 }
