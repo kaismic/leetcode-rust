@@ -1,6 +1,7 @@
 #![allow(unused)]
 use std::collections::HashMap;
 use std::collections::HashSet;
+use std::collections::VecDeque;
 
 fn main() {}
 
@@ -173,4 +174,59 @@ fn path_can_finish(graph: &mut Vec<Vec<i32>>, visited: &mut Vec<i8>, i: usize) -
     }
     visited[i] = 1;
     return true;
+}
+
+// #239
+pub fn max_sliding_window(nums: Vec<i32>, k: i32) -> Vec<i32> {
+    if k == 1 || nums.len() == 1 {
+        return nums;
+    }
+    let k = k as usize;
+    if k == nums.len() {
+        return vec![*nums.iter().max().unwrap()];
+    }
+    let mut candidates = VecDeque::new();
+    let mut result = Vec::new();
+    for (i, num) in nums.iter().enumerate() {
+        if i >= k && *candidates.front().unwrap() == nums[i - k] {
+            candidates.pop_front();
+        }
+        while let Some(back) = candidates.back() {
+            if back < num {
+                candidates.pop_back();
+            } else {
+                break;
+            }
+        }
+        candidates.push_back(*num);
+        if i >= k - 1 {
+            result.push(*candidates.front().unwrap());
+        }
+    }
+    return result;
+}
+
+#[test]
+fn test_max_sliding_window() {
+    let numss = vec![
+        vec![1,3,1,2,0,5],
+        vec![1],
+        vec![1,3,-1,-3,5,5,5,3,6,7,3],
+        vec![7,2,4],
+        vec![7,2,4]
+    ];
+    let ks = vec![
+        3,1,3,2,3
+    ];
+    let expected = vec![
+        vec![3,3,2,5],
+        vec![1],
+        vec![3,3,5,5,5,5,6,7,7],
+        vec![7,4],
+        vec![7]
+    ];
+    for i in 0..numss.len() {
+        println!("test #{}",i);
+        assert_eq!(max_sliding_window(numss[i].clone(), ks[i]), expected[i]);
+    }
 }
