@@ -230,3 +230,38 @@ fn test_max_sliding_window() {
         assert_eq!(max_sliding_window(numss[i].clone(), ks[i]), expected[i]);
     }
 }
+
+// #54
+pub fn spiral_order(matrix: Vec<Vec<i32>>) -> Vec<i32> {
+    let mut result = Vec::with_capacity(matrix.len()*matrix[0].len());
+    let mut vertical = 0..matrix.len();
+    let mut horizontal = 0..matrix[0].len();
+    loop {
+        for j in horizontal.clone() {
+            result.push(matrix[vertical.start][j]);
+        }
+        vertical.start += 1;
+        if result.len() == result.capacity() {
+            return result;
+        }
+        for i in vertical.clone() {
+            result.push(matrix[i][horizontal.end - 1]);
+        }
+        horizontal.end -= 1;
+        if result.len() == result.capacity() {
+            return result;
+        }
+        for j in horizontal.clone().rev() {
+            result.push(matrix[vertical.end - 1][j]);
+        }
+        vertical.end -= 1;
+        if result.len() == result.capacity() {
+            return result;
+        }
+        for i in vertical.clone().rev() {
+            result.push(matrix[i][horizontal.start]);
+        }
+        horizontal.start += 1;
+    }
+    return result;
+}
